@@ -1,17 +1,26 @@
 #!/usr/bin/env node
 // src/index.js
 // Interactive entrypoint that provides a small REPL-style calculator using
-// the operations implemented in src/calculator.js
+// the operations implemented in src/calculator.js. This file exposes a
+// small one-shot CLI mode (when called with 3 args) and an interactive
+// REPL mode when run without args.
 
 const readline = require('readline');
 const path = require('path');
 
 const { calc } = require('./calculator');
 
+/** Simple add helper kept for backward compatibility with earlier exports. */
 function add(a, b) {
   return a + b;
 }
 
+/**
+ * Parse a string token to a number, throwing an Error with a clear message
+ * when the token is not a valid numeric value.
+ * @param {string} token
+ * @returns {number}
+ */
 function parseNumber(token) {
   const n = Number(token);
   if (Number.isNaN(n)) throw new Error(`Invalid number: ${token}`);
@@ -32,12 +41,17 @@ function clearScreen() {
   }
 }
 
+/** Print short interactive help text describing supported commands. */
 function printHelp() {
   console.log('Enter commands like: <operation> <a> <b>');
   console.log('Examples: add 2 3   |   subtract 5 1   |   multiply 4 6   |   divide 10 2');
   console.log("Type 'help' to show this message, or 'exit' / 'quit' to leave.");
 }
 
+/**
+ * Start the interactive REPL. Reads lines from stdin, parses commands, and
+ * prints results. Supports 'help' and 'exit'/'quit'.
+ */
 function startRepl() {
   clearScreen();
   console.log('Simple calculator REPL — operations: add, subtract (sub), multiply (mul), divide (div)');
